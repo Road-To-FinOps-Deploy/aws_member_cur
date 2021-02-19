@@ -36,7 +36,7 @@ See "iam.json" for the policy definition.
 1. Clone this repo to a location on your laptop
 
 ``` 
-git clone https://github.com/road-to-finops/Penny.git
+git clone https://github.com/Road-To-FinOps-Deploy/aws_member_cur
 ```
 
 2. Install terraform 
