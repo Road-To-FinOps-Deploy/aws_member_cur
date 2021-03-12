@@ -29,7 +29,7 @@ data "aws_iam_policy_document" "s3_bucket_policy" {
 
     principals {
       type        = "AWS"
-      identifiers = ["arn:aws:iam::386209384616:root"]
+      identifiers = ["arn:aws:iam::386209384616:root"] # DO NOT CHANGE ACCOUNT NUMBER THIS IS SO AWS CAN PUT IN CUR
     }
 
     resources = [
@@ -46,7 +46,7 @@ data "aws_iam_policy_document" "s3_bucket_policy" {
 
     principals {
       type        = "AWS"
-      identifiers = ["arn:aws:iam::386209384616:root"]
+      identifiers = ["arn:aws:iam::386209384616:root"] # DO NOT CHANGE ACCOUNT NUMBER THIS IS SO AWS CAN PUT IN CUR
     }
 
     resources = [
