@@ -25,10 +25,10 @@ resource "aws_lambda_function" "crawler_cf" {
 }
 
 resource "aws_lambda_permission" "allow_bucket" {
-  statement_id  = "AllowExecutionFromS3Bucket"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.crawler_cf.arn
-  principal     = "s3.amazonaws.com"
-  source_arn    = aws_s3_bucket.s3_bucket.arn
+  statement_id   = "AllowExecutionFromS3Bucket"
+  action         = "lambda:InvokeFunction"
+  function_name  = aws_lambda_function.crawler_cf.arn
+  principal      = "s3.amazonaws.com"
+  source_arn     = aws_s3_bucket.s3_bucket.arn
   source_account = data.aws_caller_identity.current.account_id
 }
