@@ -17,43 +17,30 @@ CUR proccess:
 
 ### Pre-requisites
 
-1. Make sure you're running the right version of Terraform locally - see the Notes section below.
-You can use 'asdf' to manage differt versions of Terraform. See here for more information:
-
-2. Make sure you're running the right version of Python locally - See the Notes section below.
-Again you can use 'asdf' to control this.
-
-3. Make sure that your AWS default region is set correctly.
+1. Make sure that your AWS default region is set correctly.
 The region specified in your penny profile should match that in your local $AWS_DEFAULT_REGION environment variable.
 
-4. Make sure the IAM policy you're using covers access to all the AWS services that you're using.
+2. Make sure the IAM policy you're using covers access to all the AWS services that you're using.
 If you've coded up some Terraform for a new AWS service then the policy will need to change.
 See "iam.json" for the policy definition.
 
 
 ### Set up 
 
-1. Clone this repo to a location on your laptop
-
-``` 
-git clone https://github.com/Road-To-FinOps-Deploy/aws_member_cur
-```
-
-2. Install terraform 
+1.  Install terraform 
 [Terraform – Getting Started – Install Terraform on Windows, Linux and Mac OS | Vasos Koupparis](https://www.vasos-koupparis.com/terraform-getting-started-install/)
 
 ``` 
 brew install terraform
 ```
 
-4. Install AWS cli
+2. Install AWS cli
 
 [Installing the AWS CLI - AWS Command Line Interface](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)
 
 ```
 pip3 install awscli --upgrade --user
 ```
-
 
 
 3. Create an AWS IAM User
@@ -73,33 +60,40 @@ Default region name [None]: eu-west-1
 Default output format [None]: json
 ```
 
-5. Create s3
-Replace the account number with your billing account number
-```
-aws s3api create-bucket --bucket cost-penny-bucket--*account-number* --region eu-west-1 --profile penny  --create-bucket-configuration LocationConstraint=eu-west-1
-```
+5. terraform module reference 
+    (see new to terraform bit below if you need help)
+'''
+module "aws_member_cur" {
+  source = "github.com/Road-To-FinOps-Deploy/aws_member_cur"
+}
+'''
 
-6. Update the Terraform files
-Go to the AWS Terraform folder
-Open 'backend.tf' and replace the account number with your account number.
- 
-
-
-8. Deploy Terraform
+6. Deploy Terraform
 ```
 terraform init
 terraform plan
 terraform apply
 ```
-9. Run setup lambda
+7. Run setup lambda
 ```
 aws lambda invoke --function-name lambda_cur out --log-type Tail --profile penny
 ```
 
 
+## Optional Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|:----:|:-----:|:-----:|
+| bucket\_name | Start of bucket name that will be created. this will add on account id| string | `"cur_bucket"` | no 
+| region | Deployment Region | string | `"eu-west-1"` | no |
+| report\_name | The name of your Cost and Usage Report | string | `"MemberCUR"` | no |
+| timeunit | Granularity of CUR | string | `"HOURLY"` | no |
+| athena_table_name | Name of your Athena table  | string | `"MemberCUR"` | no |
+
+
 Now you have setup your access, deployed your terraform and triggered your lambda function you are all setup.
 
-The first Cost and Usage report takes 24hr to appear in your s3 bucket so set your timer and look out for your athena tabel.
+The first Cost and Usage report takes 24hr to appear in your s3 bucket. Once this happends the terraform will build the yaml file for the crawler AWS provides so set your timer and look out for your athena table.
 
 Once the 24hrs is comeplete you should have an Athena Database with your aws billing data in it.
 
@@ -110,6 +104,31 @@ After you have data in the anthea table you can put it in AWS Quicksight
 https://wellarchitectedlabs.com/cost/200_labs/200_enterprise_dashboards/
 
 
-#### Notes
-- Terraform v0.11.13
-- Python 3.6.5 
+
+### New to terraform?
+
+Create a terraform file *main.tf*
+
+
+```
+terraform {
+  backend "s3" {
+    bucket  = "penny-bucket-577906137810"
+    key     = "<name of bucket in managment account>"
+    region  = "eu-west-1"
+    encrypt = "true"
+    profile = "penny"
+  }
+}
+
+
+provider "aws" {
+  region  = "eu-west-1"
+  profile = "penny"
+}
+
+module "aws_member_cur" {
+  source = "github.com/Road-To-FinOps-Deploy/aws_member_cur"
+}
+
+```

@@ -1,4 +1,5 @@
 variable "bucket_name" {
+  default = "cur_bucket"
 }
 
 variable "region" {
