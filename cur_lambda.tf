@@ -10,7 +10,7 @@ module "lambda_cur" {
   // Specify a file or directory for the source code.
   source_path = "${path.module}/source/cur"
 
-  policy        = {json = data.aws_iam_policy_document.cur_policy.json}
+  policy = { json = data.aws_iam_policy_document.cur_policy.json }
 
 
   // Add environment variables.
@@ -18,7 +18,8 @@ module "lambda_cur" {
     variables = {
       BUCKET_NAME = aws_s3_bucket.s3_bucket.id
       REGION      = var.region
-      TIMEUNIT = var.timeunit
+      TIMEUNIT    = var.timeunit
+      REPORTNAME  = var.report_name
     }
   }
   tags = {
@@ -110,11 +111,11 @@ data "aws_iam_policy_document" "cur_policy" {
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch_cur" {
-  statement_id  = "AllowExecutionFromCloudWatch"
-  action        = "lambda:InvokeFunction"
-  function_name = module.lambda_cur.function_name
-  principal     = "events.amazonaws.com"
-  depends_on    = [module.lambda_cur]
+  statement_id   = "AllowExecutionFromCloudWatch"
+  action         = "lambda:InvokeFunction"
+  function_name  = module.lambda_cur.function_name
+  principal      = "events.amazonaws.com"
+  depends_on     = [module.lambda_cur]
   source_account = data.aws_caller_identity.current.account_id
 }
 

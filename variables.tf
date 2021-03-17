@@ -1,15 +1,19 @@
 variable "bucket_name" {
-  default = "costbucketmcur"
+  default = "cur_bucket"
 }
 
 variable "region" {
   default = "eu-west-1"
 }
 
+variable "report_name" {
+  default = "MemberCUR"
+}
+
 variable "timeunit" {
-  type = string
+  type        = string
   description = "granularity of cur"
-  default = "HOURLY"
+  default     = "HOURLY"
 }
 
 variable "athena_table_name" {
